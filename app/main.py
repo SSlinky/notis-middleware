@@ -63,7 +63,7 @@ def process_response(response: requests.Response, model: ResponseModel):
 
 
 @app.get("/hours", response_model=ResponseModel)
-async def hours(api_key: str, org_id: str, person_id: str = Header(None)):
+async def hours():
     """Endpoint that returns the billable hours logged in Productive.
 
     Args:
@@ -76,11 +76,18 @@ async def hours(api_key: str, org_id: str, person_id: str = Header(None)):
 
     # Build the options.
     options = {
-        "api_key": api_key,
-        "org_id": org_id,
-        "person_id": person_id,
+        "api_key": os.getenv("API_KEY"),
+        "org_id": os.getenv("ORG_ID"),
+        "person_id": os.getenv("PERSON_ID"),
         "page": 1,
     }
+
+    # Validate we have the required environment variables.
+    if options["api_key"] is None or options["org_id"] is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Missing required environment variables"
+        )
 
     # Get and process the first response.
     response = get_time_entries(options)
