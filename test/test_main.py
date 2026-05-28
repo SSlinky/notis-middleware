@@ -1,8 +1,7 @@
 """Test cases for the main application."""
-from dotenv import dotenv_values
+import os
 from app.main import process_metadata, process_response
 
-config = dotenv_values(".env")
 
 META = {
     "person": {
@@ -107,7 +106,7 @@ def test_process_response_malformed_item():
                 "relationships": {
                     "person": {"data": {
                         "type": "people",
-                        "id": config['PERSON_ID']}
+                        "id": os.getenv("PERSON_ID")}
                     },
                     # Missing service relationship
                 }

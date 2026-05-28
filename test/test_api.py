@@ -1,17 +1,14 @@
 """Test cases for the API."""
+import os
 from app import api
-from dotenv import dotenv_values
-
-
-config = dotenv_values(".env")
 
 
 def test_get_time_entries():
     """Test the get_time_entries function."""
     options = {
-        "api_key": config['API_KEY'],
-        "org_id": config['ORG_ID'],
-        "person_id": config['PERSON_ID']
+        "api_key": os.getenv("API_KEY"),
+        "org_id": os.getenv("ORG_ID"),
+        "person_id": os.getenv("PERSON_ID")
     }
     response = api.get_time_entries(options)
     assert response.status_code == 200
