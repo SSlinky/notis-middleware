@@ -18,8 +18,8 @@ class HoursSubTotal(BaseModel):
         self.total += minutes / 60
 
 
-class ResponseModel(BaseModel):
-    """Response model for the /hours endpoint."""
+class BuildModel(BaseModel):
+    """Model for the build response."""
     response_message: str = None
     services: dict[str, dict[str, str]] = {}
     data: dict[str, HoursSubTotal] = {}
@@ -33,3 +33,29 @@ class ResponseModel(BaseModel):
             "name": name,
             "project": project
         }
+
+
+class ResponseModel(BaseModel):
+    """Response model for the /hours endpoint."""
+    response_message: str = None
+    services: dict[str, dict[str, str]] = {}
+    data: list[HoursSubTotal] = []
+
+    def get_service(self, service_id: str):
+        """Get the service name for a given service ID."""
+        svc = self.services.get(service_id)
+        name = svc.get("name", "Unknown") if svc else "Unknown"
+        project = svc.get("deal", "Unknown") if svc else "Unknown"
+        return {
+            "name": name,
+            "project": project
+        }
+
+
+def build_response_model(model: BuildModel) -> ResponseModel:
+    """Build the response model from the build model."""
+    response = ResponseModel()
+    response.response_message = model.response_message
+    response.services = model.services
+    response.data = list(model.data.values())
+    return response

@@ -1,8 +1,10 @@
 """The main api entrypoint."""
+import os
 import requests
 from app.api import get_time_entries
-from app.model import HoursSubTotal, ResponseModel
-from fastapi import FastAPI, Header, HTTPException
+from app.model import BuildModel, HoursSubTotal
+from app.model import ResponseModel, build_response_model
+from fastapi import FastAPI, HTTPException
 
 
 app = FastAPI()
@@ -23,7 +25,7 @@ def process_metadata(response: requests.Response):
         elif item["type"] == "deals":
             deals[item["id"]] = item["attributes"]["name"]
 
-    model = ResponseModel()
+    model = BuildModel()
     model.services = {
         id: {
             "name": service["name"],
@@ -34,7 +36,7 @@ def process_metadata(response: requests.Response):
     return model
 
 
-def process_response(response: requests.Response, model: ResponseModel):
+def process_response(response: requests.Response, model: BuildModel):
     """Process a 200 response from the Productive API."""
     if response.status_code != 200:
         msg = f"Unexpected response status code: {response.status_code}"
@@ -63,7 +65,7 @@ def process_response(response: requests.Response, model: ResponseModel):
 
 
 @app.get("/hours", response_model=ResponseModel)
-async def hours(api_key: str, org_id: str, person_id: str = Header(None)):
+async def hours():
     """Endpoint that returns the billable hours logged in Productive.
 
     Args:
@@ -71,16 +73,21 @@ async def hours(api_key: str, org_id: str, person_id: str = Header(None)):
         org_id (str): The organisation ID to get hours from.
         person_id (str, optional): The person ID to get hours for.
     """
-    if api_key is None:
-        raise HTTPException(status_code=400, detail="Missing x-api-key header")
 
     # Build the options.
     options = {
-        "api_key": api_key,
-        "org_id": org_id,
-        "person_id": person_id,
+        "api_key": os.getenv("API_KEY"),
+        "org_id": os.getenv("ORG_ID"),
+        "person_id": os.getenv("PERSON_ID"),
         "page": 1,
     }
+
+    # Validate we have the required environment variables.
+    if options["api_key"] is None or options["org_id"] is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Missing required environment variables"
+        )
 
     # Get and process the first response.
     response = get_time_entries(options)
@@ -99,4 +106,4 @@ async def hours(api_key: str, org_id: str, person_id: str = Header(None)):
         response = get_time_entries(options)
         process_response(response, model)
 
-    return model
+    return build_response_model(model)
