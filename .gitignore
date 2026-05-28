@@ -221,6 +221,7 @@ __marimo__/
 .*
 
 ## Don't ignore these files:
+!.dockerignore
 !.gitignore
 !.flake8
 !.github/
