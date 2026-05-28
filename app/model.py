@@ -27,8 +27,8 @@ class ResponseModel(BaseModel):
     def get_service(self, service_id: str):
         """Get the service name for a given service ID."""
         svc = self.services.get(service_id)
-        name = svc.get("name", "Unknown Service") if svc else "Unknown Service"
-        project = svc.get("deal", "Unknown Project") if svc else "Unknown Project"
+        name = svc.get("name", "Unknown") if svc else "Unknown"
+        project = svc.get("deal", "Unknown") if svc else "Unknown"
         return {
             "name": name,
             "project": project

@@ -5,6 +5,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 
+
 def test_get_time_entries():
     """Test the get_time_entries function."""
     options = {

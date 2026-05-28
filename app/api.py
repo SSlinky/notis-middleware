@@ -7,6 +7,7 @@ API = {
     "get_time_entries": "https://api.productive.io/api/v2/time_entries"
 }
 
+
 def get_time_entries(options: dict):
     """Gets the time entries from the Productive API
 
@@ -34,4 +35,9 @@ def get_time_entries(options: dict):
     if options.get("person_id"):
         params["filter[person_id]"] = options["person_id"]
 
-    return requests.get(API["get_time_entries"], headers=headers, params=params, timeout=10)
+    return requests.get(
+        API["get_time_entries"],
+        headers=headers,
+        params=params,
+        timeout=10
+    )

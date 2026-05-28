@@ -26,6 +26,7 @@ META = {
     }
 }
 
+
 class MockResponse:
     """A mock response object for testing."""
     def __init__(self, json_data):
@@ -39,6 +40,7 @@ class MockResponse:
     def raise_for_status(self):
         """Mock raise_for_status method."""
 
+
 def test_process_metadata():
     """Test the process_metadata function."""
     response = MockResponse({
@@ -47,8 +49,14 @@ def test_process_metadata():
                 "type": "time_entries",
                 "attributes": {"time": 120},
                 "relationships": {
-                    "person": {"data": {"type": "people", "id": META["person"]["id"]}},
-                    "service": {"data": {"type": "services", "id": META["service"]["id"]}}
+                    "person": {"data": {
+                        "type": "people",
+                        "id": META["person"]["id"]}
+                    },
+                    "service": {"data": {
+                        "type": "services",
+                        "id": META["service"]["id"]}
+                    }
                 }
             }
         ],
@@ -62,11 +70,14 @@ def test_process_metadata():
     model = process_metadata(response)
     assert META["service"]["id"] in model.services
     assert len(model.services) == 1
-    assert model.services[META["service"]["id"]]["name"] == META["service"]["attributes"]["name"]
-    assert model.services[META["service"]["id"]]["deal"] == META["deal"]["attributes"]["name"]
+    assert model.services[META["service"]["id"]]["name"] == \
+        META["service"]["attributes"]["name"]
+    assert model.services[META["service"]["id"]]["deal"] == \
+        META["deal"]["attributes"]["name"]
+
 
 def test_process_response_raise_for_status():
-    """Test the process_response function raises ValueError for non-200 responses."""
+    """Test the process_response raises ValueError for non-200 responses."""
     response = MockResponse({})
     response.status_code = 400
     try:
@@ -75,8 +86,9 @@ def test_process_response_raise_for_status():
     except ValueError as exc:
         assert str(exc) == "Unexpected response status code: 400"
 
+
 def test_process_response_missing_data():
-    """Test the process_response function raises ValueError for missing 'data' key."""
+    """Test the process_response raises ValueError for missing 'data' key."""
     response = MockResponse({})
     try:
         process_response(response, None)
@@ -84,15 +96,19 @@ def test_process_response_missing_data():
     except ValueError as exc:
         assert str(exc) == "Response JSON does not contain 'data' key: {}"
 
+
 def test_process_response_malformed_item():
-    """Test the process_response function raises ValueError for malformed items."""
+    """Test the process_response raises ValueError for malformed items."""
     response = MockResponse({
         "data": [
             {
                 "type": "time_entries",
                 "attributes": {"time": 120},
                 "relationships": {
-                    "person": {"data": {"type": "people", "id": config['PERSON_ID']}},
+                    "person": {"data": {
+                        "type": "people",
+                        "id": config['PERSON_ID']}
+                    },
                     # Missing service relationship
                 }
             }
@@ -106,6 +122,7 @@ def test_process_response_malformed_item():
     except ValueError as exc:
         assert str(exc).startswith("Malformed response item:")
 
+
 def test_process_response_valid():
     """Test the process_response function with valid data."""
     response = MockResponse({
@@ -114,16 +131,28 @@ def test_process_response_valid():
                 "type": "time_entries",
                 "attributes": {"time": 480},
                 "relationships": {
-                    "person": {"data": {"type": "people", "id": META["person"]["id"]}},
-                    "service": {"data": {"type": "services", "id": META["service"]["id"]}}
+                    "person": {"data": {
+                        "type": "people",
+                        "id": META["person"]["id"]}
+                    },
+                    "service": {"data": {
+                        "type": "services",
+                        "id": META["service"]["id"]}
+                    }
                 }
             },
             {
                 "type": "time_entries",
                 "attributes": {"time": 480},
                 "relationships": {
-                    "person": {"data": {"type": "people", "id": META["person"]["id"]}},
-                    "service": {"data": {"type": "services", "id": META["service"]["id"]}}
+                    "person": {"data": {
+                        "type": "people",
+                        "id": META["person"]["id"]}
+                    },
+                    "service": {"data": {
+                        "type": "services",
+                        "id": META["service"]["id"]}
+                    }
                 }
             }
         ],
