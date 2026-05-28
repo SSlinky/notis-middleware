@@ -10,6 +10,7 @@ def test_get_month_range():
     assert first_day == datetime.datetime(2024, 6, 1)
     assert last_day == datetime.datetime(2024, 6, 30)
 
+
 def test_get_month_range_december():
     """Test the get_month_range function for December."""
     date = datetime.datetime(2024, 12, 15)
