@@ -14,10 +14,16 @@ certifi==2026.5.20
     # via requests
 charset-normalizer==3.4.7
     # via requests
+click==8.4.1
+    # via uvicorn
+colorama==0.4.6
+    # via click
 dotenv==0.9.9
     # via -r requirements.in
 fastapi==0.136.3
     # via -r requirements.in
+h11==0.16.0
+    # via uvicorn
 idna==3.16
     # via
     #   anyio
@@ -46,3 +52,5 @@ typing-inspection==0.4.2
     #   pydantic
 urllib3==2.7.0
     # via requests
+uvicorn==0.48.0
+    # via -r requirements.in
